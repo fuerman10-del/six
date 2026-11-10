@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>写给宝宝的一封信</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #4e4038;
+    --ink-soft: #7d6b61;
+    --rose: #b5615f;
+    --rose-light: #d9a3a0;
+    --paper: #fffdfa;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+    color: var(--ink);
+    background: #f7e9e0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body.locked { overflow: hidden; }
+
+  /* ---------- 背景 ---------- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(circle at 18% 12%, #fff7f1 0%, transparent 55%),
+      radial-gradient(circle at 86% 82%, #fbe2d5 0%, transparent 52%),
+      linear-gradient(160deg, #fdf4ee 0%, #f6e2d6 55%, #eed3c4 100%);
+  }
+
+  #petals {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .petal {
+    position: absolute;
+    bottom: -60px;
+    color: rgba(190, 118, 118, 0.4);
+    animation-name: rise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform, opacity;
+  }
+
+  @keyframes rise {
+    0%   { transform: translateY(0) rotate(0deg);      opacity: 0; }
+    8%   {                                             opacity: 1; }
+    92%  {                                             opacity: .7; }
+    100% { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ---------- 信封场景 ---------- */
+  .envelope-scene {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 46px;
+    transition: opacity .9s ease, transform .9s ease;
+  }
+
+  .envelope-scene.hide {
+    opacity: 0;
+    transform: scale(1.06);
+    pointer-events: none;
+  }
+
+  .envelope {
+    position: relative;
+    width: min(78vw, 340px);
+    aspect-ratio: 340 / 220;
+    cursor: pointer;
+    perspective: 1000px;
+    filter: drop-shadow(0 20px 34px rgba(150, 90, 70, .25));
+    transition: transform .5s cubic-bezier(.3,.8,.3,1);
+    outline: none;
+    animation: bob 4.5s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { translate: 0 0; }
+    50%      { translate: 0 -9px; }
+  }
+
+  .envelope:hover,
+  .envelope:focus-visible { transform: translateY(-6px) scale(1.02); }
+
+  .env-body {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: linear-gradient(150deg, #f8e8dc 0%, #ecd0c0 100%);
+    box-shadow: inset 0 0 0 1px rgba(200, 155, 135, .4);
+  }
+
+  .env-body::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background:
+      linear-gradient(to bottom right, transparent 49.55%, rgba(176, 128, 108, .3) 50%, transparent 50.45%),
+      linear-gradient(to bottom left,  transparent 49.55%, rgba(176, 128, 108, .3) 50%, transparent 50.45%);
+  }
+
+  .env-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 58%;
+    background: linear-gradient(170deg, #f3ddd0 0%, #e5c6b4 100%);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center;
+    transform: rotateX(0deg);
+    transition: transform .85s cubic-bezier(.55, -.15, .35, 1.1), opacity .5s ease .35s;
+    z-index: 4;
+  }
+
+  .envelope.open .env-flap {
+    transform: rotateX(178deg);
+    opacity: 0;
+  }
+
+  .seal {
+    position: absolute;
+    top: 58%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+    line-height: 1;
+    color: #f9dbd3;
+    background: radial-gradient(circle at 34% 28%, #dc8386 0%, #b04a52 62%, #8e353d 100%);
+    box-shadow:
+      0 5px 14px rgba(120, 40, 50, .4),
+      inset 0 -3px 8px rgba(0, 0, 0, .22),
+      inset 0 2px 6px rgba(255, 255, 255, .22);
+    z-index: 5;
+    transition: opacity .45s ease, transform .45s ease;
+  }
+
+  .envelope.open .seal {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.6);
+  }
+
+  .hint {
+    font-size: clamp(13px, 2.6vw, 15px);
+    letter-spacing: .28em;
+    text-indent: .28em;
+    color: #a98a7c;
+    animation: breathe 3s ease-in-out infinite;
+    user-select: none;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: .45; }
+    50%      { opacity: 1; }
+  }
+
+  /* ---------- 信纸 ---------- */
+  .letter-wrap {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding: clamp(30px, 7vw, 80px) clamp(14px, 4vw, 30px) clamp(60px, 12vw, 130px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease, visibility 0s linear 1s;
+  }
+
+  .letter-wrap.show {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1s ease, visibility 0s linear 0s;
+  }
+
+  .paper {
+    position: relative;
+    width: min(100%, 680px);
+    padding: clamp(34px, 7vw, 76px) clamp(24px, 7vw, 72px) clamp(38px, 7vw, 70px);
+    border-radius: 5px;
+    background:
+      linear-gradient(180deg, #fffefb 0%, #fdf8f2 100%);
+    box-shadow:
+      0 30px 70px -18px rgba(150, 100, 80, .35),
+      0 4px 14px rgba(150, 100, 80, .1),
+      inset 0 0 0 1px rgba(210, 178, 160, .35);
+    font-size: clamp(15px, 1.7vw, 17px);
+    line-height: 2.15;
+    letter-spacing: .035em;
+  }
+
+  .paper::before {
+    content: '';
+    position: absolute;
+    top: clamp(26px, 6vw, 60px);
+    bottom: clamp(26px, 6vw, 60px);
+    left: clamp(10px, 3vw, 28px);
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(217, 163, 160, .55), transparent);
+  }
+
+  .paper h1 {
+    font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+    font-weight: 400;
+    font-size: clamp(30px, 5.6vw, 46px);
+    letter-spacing: .1em;
+    text-indent: .1em;
+    text-align: center;
+    color: var(--rose);
+    margin-bottom: clamp(26px, 5vw, 44px);
+    text-shadow: 0 2px 10px rgba(181, 97, 95, .16);
+  }
+
+  .paper p {
+    text-indent: 2em;
+    margin-bottom: 1.15em;
+    text-align: justify;
+    color: var(--ink);
+    font-weight: 300;
+  }
+
+  .paper p.greet {
+    text-indent: 0;
+    color: var(--ink-soft);
+    letter-spacing: .16em;
+    margin-bottom: 1.6em;
+  }
+
+  .paper p strong {
+    font-weight: 600;
+    color: var(--rose);
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: clamp(28px, 5vw, 42px) 0;
+    color: var(--rose-light);
+    font-size: 13px;
+    letter-spacing: .2em;
+    text-indent: 0;
+  }
+
+  .ornament::before,
+  .ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(217, 163, 160, .8), transparent);
+  }
+
+  .signature {
+    margin-top: clamp(34px, 6vw, 52px);
+    text-align: right;
+    text-indent: 0;
+    color: var(--ink-soft);
+    line-height: 2;
+    letter-spacing: .1em;
+  }
+
+  .signature .sig-heart {
+    font-size: 26px;
+    color: var(--rose);
+    line-height: 1.2;
+    display: inline-block;
+    animation: beat 2.4s ease-in-out infinite;
+  }
+
+  @keyframes beat {
+    0%, 100% { transform: scale(1); }
+    14%      { transform: scale(1.16); }
+    28%      { transform: scale(1); }
+    42%      { transform: scale(1.1); }
+    56%      { transform: scale(1); }
+  }
+
+  .sig-date {
+    display: block;
+    margin-top: .5em;
+    font-size: .8em;
+    letter-spacing: .22em;
+    color: #a9948a;
+  }
+
+  .reveal { opacity: 0; }
+
+  .letter-wrap.show .reveal {
+    animation: fadeUp .95s cubic-bezier(.22, .82, .3, 1) forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .footer-note {
+    text-align: center;
+    color: #b09a90;
+    font-size: 12px;
+    letter-spacing: .3em;
+    text-indent: .3em;
+    margin-top: 34px;
+    user-select: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+</style>
+</head>
+<body class="locked">
+
+  <div id="petals" aria-hidden="true"></div>
+
+  <!-- ============ 信封 ============ -->
+  <div class="envelope-scene" id="scene">
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="打开这封信">
+      <div class="env-body"></div>
+      <div class="env-flap"></div>
+      <div class="seal">♥</div>
+    </div>
+    <p class="hint">轻触信封 · 打开它</p>
+  </div>
+
+  <!-- ============ 信纸 ============ -->
+  <main class="letter-wrap" id="letterWrap">
+    <article class="paper">
+
+      <h1 class="reveal">写给宝宝的一封信</h1>
+
+      <p class="reveal">感觉你今晚有点不自在，我想了很久，还是决定把这些写下来。</p>
+
+      <p class="reveal">从我们认识到现在，一起聊天、一起玩，一起度过了很多时光。不知道从什么时候开始，我发现自己越来越在意你——你开心，我就跟着开心；你情绪低落，我就总想做点什么。你是个特别真诚的人，真诚到有时候我会想：这个女孩怎么能这么好。</p>
+
+      <div class="ornament reveal">❦</div>
+
+      <p class="reveal">我最怕的是，你因为知道了这份心意，反而变得不自在、有压力。其实我知道，我是个挺笨的人，有时候好心办坏事，本来挺好的事也能被我搞砸。这一点我心里清楚，也会慢慢改。我不是要你等我，也不是想让你安慰我，只是想跟你说句实话：我在认真对待自己，也在认真对待你。<strong>如果以后我哪里做得不对，你直接告诉我，我会听，也会慢慢改。</strong></p>
+
+      <p class="reveal">你有什么不开心的事，随时可以跟我说。不用总一个人扛着、憋在心里，也不用在我面前逞强。我在这儿，愿意安安静静地听你说话。</p>
+
+      <div class="ornament reveal">❦</div>
+
+      <p class="reveal">我喜欢看你笑。你笑的时候，我心里就特别踏实、特别幸福。我纯粹就是想让你更开心一点。你要问我图什么，大概就是图你多笑几次吧。你坦然接受我的心意，不躲着我、不为难自己，对我来说就是最好的回应了。</p>
+
+      <p class="reveal">还有，你穿上明制汉服去拍的那些写真，每一张都很好看。看到你开心，我也跟着开心。</p>
+
+      <p class="reveal">我愿意把一切美好的东西都与你分享——我说的是时间、陪伴、我看到的风景、我听到的好歌。你只要做你自己，轻轻松松的，想理我就理我，想骂我就骂我，想安静就安静。我就站在这儿，不远不近。</p>
+
+      <div class="ornament reveal">❦</div>
+
+      <p class="reveal"><strong>在我心里，你（wyt）是很重要、很特别的人。我愿意给，是因为你值得。在我心里你是唯一，你信任我、依赖我，这就证明我在你心里也很特别。</strong></p>
+
+      <p class="reveal">希望每天的你，都开开心心。“明天见”是一句很美好的话，而我们还有很多个明天。</p>
+
+      <div class="signature reveal">
+        <span>永远爱你的小石</span><br>
+        <span class="sig-heart">♡</span>
+        <span class="sig-date">二〇二六 · 十一月</span>
+      </div>
+
+    </article>
+  </main>
+
+<script>
+  (function makePetals() {
+    const layer = document.getElementById('petals');
+    const symbols = ['♥', '❤', '✿', '❀', '·'];
+    const count = window.innerWidth < 600 ? 14 : 22;
+
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('span');
+      p.className = 'petal';
+      p.textContent = symbols[i % symbols.length];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.fontSize = (9 + Math.random() * 15).toFixed(1) + 'px';
+      p.style.animationDuration = (15 + Math.random() * 18).toFixed(1) + 's';
+      p.style.animationDelay = (-Math.random() * 30).toFixed(1) + 's';
+      p.style.color = `rgba(190, 118, 118, ${(0.18 + Math.random() * 0.28).toFixed(2)})`;
+      layer.appendChild(p);
+    }
+  })();
+
+  (function openLogic() {
+    const scene = document.getElementById('scene');
+    const envelope = document.getElementById('envelope');
+    const letterWrap = document.getElementById('letterWrap');
+    let opened = false;
+
+    function openLetter() {
+      if (opened) return;
+      opened = true;
+
+      envelope.classList.add('open');
+      document.body.classList.remove('locked');
+
+      setTimeout(() => {
+        scene.classList.add('hide');
+        letterWrap.classList.add('show');
+
+        const items = letterWrap.querySelectorAll('.reveal');
+        items.forEach((el, i) => {
+          el.style.animationDelay = (0.25 + i * 0.16).toFixed(2) + 's';
+        });
+
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }, 620);
+    }
+
+    scene.addEventListener('click', openLetter);
+
+    envelope.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openLetter();
+      }
+    });
+  })();
+</script>
+</body>
+</html>
